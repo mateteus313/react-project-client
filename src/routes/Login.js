@@ -14,6 +14,8 @@ import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Axios from 'axios'
 import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function Copyright(props) {
   return (
@@ -51,6 +53,21 @@ export default function LoginForm() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    if(formData.email.match(validRegex)) {
+      console.log(formData)
+    } else {
+      toast.error('Campo email em formato incorreto!', {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
+    }
+
     //Axios.post('http://localhost:3001/api/user/login', {
     //  data: [formData],
     //}).then((res) => {
@@ -60,6 +77,18 @@ export default function LoginForm() {
 
   return (
     <ThemeProvider theme={defaultTheme}>
+      <ToastContainer
+        position="top-center"
+        autoClose={2000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <Box
