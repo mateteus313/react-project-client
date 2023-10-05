@@ -13,7 +13,6 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Axios from 'axios'
-import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -30,13 +29,11 @@ function Copyright(props) {
   );
 }
 
-// TODO remove, this demo shouldn't need to reset the theme.
-
+// Definir tema posteriormente
 const defaultTheme = createTheme();
 
 export default function LoginForm() {
   const validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-  //const navigate = useNavigate();
   
   const [formData, setFormData] = useState({
     email: "",
@@ -54,7 +51,11 @@ export default function LoginForm() {
     e.preventDefault();
 
     if(formData.email.match(validRegex)) {
-      console.log(formData)
+      Axios.post('http://localhost:3001/api/user/login', {
+      data: formData,
+      }).then((response) => {
+        console.log(response.data)
+      })
     } else {
       toast.error('Campo email em formato incorreto!', {
         position: "top-center",
@@ -67,12 +68,6 @@ export default function LoginForm() {
         theme: "colored",
       });
     }
-
-    //Axios.post('http://localhost:3001/api/user/login', {
-    //  data: [formData],
-    //}).then((res) => {
-    //  alert(res.data)
-    //})
   };
 
   return (
@@ -147,7 +142,7 @@ export default function LoginForm() {
                 </Link>
               </Grid>
               <Grid item>
-                <Link href="#" variant="body2">
+                <Link href="/register" variant="body2">
                   {"Não tem uma conta? Registre-se"}
                 </Link>
               </Grid>
