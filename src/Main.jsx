@@ -8,8 +8,9 @@ const Main = () => {
   return (
     <div>
       <h1 style={{
-        color: "red",
-        fontSize: "20px"
+        color: 'red',
+        fontSize: '20px',
+        textAlign: 'center'
       }}>Projeto React - Matheus</h1>
       
       {/*<Navbar />*/}
