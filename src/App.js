@@ -2,10 +2,11 @@ import React from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 
-import Home from './routes/Home';
-import RegistrationForm from './routes/Register.js';
-import LoginForm from './routes/Login.js';
 import Main from './Main';
+import Home from './routes/Home';
+import LoginForm from './routes/Login.js';
+import RegistrationForm from './routes/Register.js';
+import Central from './routes/Central.js'
 
 //const router = createBrowserRouter([
 //  {
@@ -34,6 +35,10 @@ const router = createBrowserRouter([
       {
         path: "/register",
         element: <RegistrationForm />,
+      },
+      {
+        path: "/central",
+        element: <Central />,
       },
     ]
   },
