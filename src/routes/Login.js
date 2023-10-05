@@ -33,13 +33,14 @@ function Copyright(props) {
 const defaultTheme = createTheme();
 
 export default function LoginForm() {
+  const validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
   //const navigate = useNavigate();
-
+  
   const [formData, setFormData] = useState({
     email: "",
     password: ""
   });
-
+  
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -55,8 +56,6 @@ export default function LoginForm() {
     //}).then((res) => {
     //  alert(res.data)
     //})
-
-    console.log(formData);
   };
 
   return (
@@ -78,7 +77,7 @@ export default function LoginForm() {
             Login
           </Typography>
           <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-            <TextField
+            <TextField sx={{ input: { color: (!formData.email.match(validRegex) && formData.email.length >= 1) ? 'red' : ''}}}
               margin="normal"
               required
               fullWidth
@@ -110,7 +109,7 @@ export default function LoginForm() {
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
-              Fazer login
+              Entrar
             </Button>
             <Grid container>
               <Grid item xs>
