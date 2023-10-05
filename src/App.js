@@ -3,8 +3,8 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 
 import Home from './routes/Home';
-import RegistrationForm from './routes/Register';
-import LoginForm from './routes/Login';
+import RegistrationForm from './routes/Register.js';
+import LoginForm from './routes/Login.js';
 import Main from './Main';
 
 //const router = createBrowserRouter([

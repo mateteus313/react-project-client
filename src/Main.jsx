@@ -11,7 +11,8 @@ const Main = () => {
         color: "red",
         fontSize: "20px"
       }}>Projeto React - Matheus</h1>
-      <Navbar />
+      
+      {/*<Navbar />*/}
 
       <Outlet />
       
