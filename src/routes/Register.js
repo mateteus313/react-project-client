@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, {useState} from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -12,13 +12,20 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import 'dayjs/locale/pt-br';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import Axios from 'axios'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function Copyright(props) {
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
       {'Copyright © '}
       <Link color="inherit" href="https://mui.com/">
-        Your Website
+        React Project - Matheus
       </Link>{' '}
       {new Date().getFullYear()}
       {'.'}
@@ -26,22 +33,96 @@ function Copyright(props) {
   );
 }
 
-// TODO remove, this demo shouldn't need to reset the theme.
-
+// Definir tema posteriormente
 const defaultTheme = createTheme();
 
 export default function SignUp() {
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
+  const [formData, setFormData] = useState({
+    username: "",
+    email: "",
+    birthDate: [],
+    phone: [],
+    address: "",
+    zipCode: [],
+    password: ""
+  });
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
     });
+  };
+
+  const handleBirthDate = (e) => {
+    setFormData({
+      ...formData,
+      birthDate: e.target.value
+    });
+    console.log(e.$y, e.$M+1, e.$D)
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    let status = false;
+
+    // Previne que existam campos nulos
+    Object.keys(formData).forEach(key => {
+      if (formData[key] === '' || formData[key].length === 0) {
+        toast.error(`Campo em falta:${key}`, {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+        });
+        status = false
+        return
+      } else {
+        status = true
+      }
+    })
+
+    if (status) {
+      // Primeiro checar se ja existe usuario com mesmo email no banco
+      //Axios.post('http://localhost:3001/api/get', {
+      //  data: formData['email'],
+      //}).then((res) => {
+      //  if (res.data === 'Liberado') {
+      //    // Se retornar 'liberado', pode ser cadastrado
+      //    Axios.post('http://localhost:3001/api/insert', {
+      //      data: [formData],
+      //    }).then((res) => {
+      //      alert(res.data)
+      //      //navigate("/login");
+      //    })
+      //  } else {
+      //    alert(res.data)
+      //    //navigate("/login");
+      //  }
+      //})
+    }
+
+    console.log(formData);
   };
 
   return (
     <ThemeProvider theme={defaultTheme}>
+      <ToastContainer
+        position="top-center"
+        autoClose={2000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <Box
@@ -56,29 +137,65 @@ export default function SignUp() {
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            Sign up
+            Registrar-se
           </Typography>
           <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
+
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
                 <TextField
                   autoComplete="given-name"
-                  name="firstName"
+                  name="username"
                   required
                   fullWidth
                   id="firstName"
-                  label="First Name"
+                  label="Nome"
                   autoFocus
+                  onChange={handleChange}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='pt-br'>
+                  <DatePicker
+                    label="Nascimento"
+                    name="birthDate"
+                    onChange={e => {
+                      formData.birthDate = `${e.$y}-${e.$M+1}-${e.$D}`
+                    }}
+                  />
+                </LocalizationProvider>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  required
+                  fullWidth
+                  id="phone"
+                  label="Telefone"
+                  name="phone"
+                  autoComplete="phone"
+                  onChange={handleChange}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
                   required
                   fullWidth
-                  id="lastName"
-                  label="Last Name"
-                  name="lastName"
-                  autoComplete="family-name"
+                  id="zipcode"
+                  label="CEP"
+                  name="zipCode"
+                  autoComplete="zipcode"
+                  onChange={handleChange}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  required
+                  fullWidth
+                  id="address"
+                  label="Endereço"
+                  name="address"
+                  autoComplete="address"
+                  onChange={handleChange}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -86,9 +203,10 @@ export default function SignUp() {
                   required
                   fullWidth
                   id="email"
-                  label="Email Address"
+                  label="Email"
                   name="email"
                   autoComplete="email"
+                  onChange={handleChange}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -96,31 +214,33 @@ export default function SignUp() {
                   required
                   fullWidth
                   name="password"
-                  label="Password"
+                  label="Senha"
                   type="password"
                   id="password"
                   autoComplete="new-password"
+                  onChange={handleChange}
                 />
               </Grid>
               <Grid item xs={12}>
                 <FormControlLabel
                   control={<Checkbox value="allowExtraEmails" color="primary" />}
-                  label="I want to receive inspiration, marketing promotions and updates via email."
+                  label="Desejo receber mensagens a respeito da minha conta por email."
                 />
               </Grid>
             </Grid>
+
             <Button
               type="submit"
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
-              Sign Up
+              Cadastrar
             </Button>
             <Grid container justifyContent="flex-end">
               <Grid item>
-                <Link href="#" variant="body2">
-                  Already have an account? Sign in
+                <Link href="/login" variant="body2">
+                  Ja possui uma conta? Faça login
                 </Link>
               </Grid>
             </Grid>
