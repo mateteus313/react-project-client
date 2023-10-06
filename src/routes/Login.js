@@ -54,7 +54,29 @@ export default function LoginForm() {
       Axios.post('http://localhost:3001/api/user/login', {
       data: formData,
       }).then((response) => {
-        console.log(response.data)
+        if(response.data === "Invalido") {
+          toast.error('Usuario ou senha invalidos!', {
+            position: "top-center",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+          });
+        } else {
+          toast.success('Logado com sucesso!', {
+            position: "top-center",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+          });
+        }
       })
     } else {
       toast.error('Campo email em formato incorreto!', {

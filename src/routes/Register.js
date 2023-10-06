@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState, useEffect, useRef} from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -19,12 +19,13 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import Axios from 'axios'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useNavigate } from "react-router-dom";
 
 function Copyright(props) {
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
       {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
+      <Link color="inherit" href="https://github.com/mateteus313">
         React Project - Matheus
       </Link>{' '}
       {new Date().getFullYear()}
@@ -47,19 +48,19 @@ export default function SignUp() {
     password: ""
   });
 
+  const navigate = useNavigate();
+  const validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+
+  const timerRef = useRef(null);
+  const redirect = () => {
+    timerRef.current = setTimeout(() => navigate('/login'), 3500);
+  }
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
     });
-  };
-
-  const handleBirthDate = (e) => {
-    setFormData({
-      ...formData,
-      birthDate: e.target.value
-    });
-    console.log(e.$y, e.$M+1, e.$D)
   };
 
   const handleSubmit = (e) => {
@@ -79,34 +80,60 @@ export default function SignUp() {
           progress: undefined,
           theme: "colored",
         });
-        status = false
-        return
-      } else {
-        status = true
+        return status = false
       }
+      status = true
     })
 
-    if (status) {
-      // Primeiro checar se ja existe usuario com mesmo email no banco
-      //Axios.post('http://localhost:3001/api/get', {
-      //  data: formData['email'],
-      //}).then((res) => {
-      //  if (res.data === 'Liberado') {
-      //    // Se retornar 'liberado', pode ser cadastrado
-      //    Axios.post('http://localhost:3001/api/insert', {
-      //      data: [formData],
-      //    }).then((res) => {
-      //      alert(res.data)
-      //      //navigate("/login");
-      //    })
-      //  } else {
-      //    alert(res.data)
-      //    //navigate("/login");
-      //  }
-      //})
+    if(!formData.email.match(validRegex)) {
+      toast.error("Campo email em formato incorreto", {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
+      return status = false
     }
 
-    console.log(formData);
+    if (status) {
+      Axios.get('http://localhost:3001/api/user', {
+        params: { email: formData.email },
+      }).then((response) => {
+        if (response.data === 'Nao localizado') {
+          Axios.post('http://localhost:3001/api/user', {
+            data: formData,
+          }).then((response) => {
+            if(response.data === 'Inserido')         
+            toast.success('Cadastrado com sucesso!', {
+              position: "top-center",
+              autoClose: 3000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "colored",
+            });
+            redirect()
+          })
+        } else {
+          toast.error("Ja existe uma conta com este email cadastrado, faça login!", {
+            position: "top-center",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+          });
+        }
+      })
+    }
   };
 
   return (
@@ -199,7 +226,7 @@ export default function SignUp() {
                 />
               </Grid>
               <Grid item xs={12}>
-                <TextField
+                <TextField sx={{ input: { color: (!formData.email.match(validRegex) && formData.email.length >= 1) ? 'red' : ''}}}
                   required
                   fullWidth
                   id="email"
@@ -248,6 +275,8 @@ export default function SignUp() {
         </Box>
         <Copyright sx={{ mt: 5 }} />
       </Container>
+      <div className='redirect'></div>
     </ThemeProvider>
+    
   );
 }
