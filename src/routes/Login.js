@@ -15,6 +15,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Axios from 'axios'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useNavigate } from "react-router-dom";
 
 function Copyright(props) {
   return (
@@ -29,10 +30,38 @@ function Copyright(props) {
   );
 }
 
+function message(type, _message) {
+  if (type === "Error") {
+    return toast.error(_message, {
+      position: "top-center",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+    });
+  } else {
+    toast.success(_message, {
+      position: "top-center",
+      autoClose: 1000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+    });
+  }
+}
+
 // Definir tema posteriormente
 const defaultTheme = createTheme();
 
 export default function LoginForm() {
+  const navigate = useNavigate();
+
   const validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
   
   const [formData, setFormData] = useState({
@@ -55,40 +84,19 @@ export default function LoginForm() {
       data: formData,
       }).then((response) => {
         if(response.data === "Invalido") {
-          toast.error('Usuario ou senha invalidos!', {
-            position: "top-center",
-            autoClose: 3000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "colored",
-          });
+          message('Error', 'Usuario ou senha invalidos!')
+          
         } else {
-          toast.success('Logado com sucesso!', {
-            position: "top-center",
-            autoClose: 3000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "colored",
-          });
+          message('Success', 'Logado com sucesso!')
+
+          const token = response.data['token'];
+          localStorage.setItem('token', JSON.stringify(token))
+
+          navigate('/central')
         }
       })
     } else {
-      toast.error('Campo email em formato incorreto!', {
-        position: "top-center",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "colored",
-      });
+      message('Error', 'Campo email em formato incorreto!')
     }
   };
 
@@ -147,7 +155,7 @@ export default function LoginForm() {
             />
             <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
+              label="Lembrar-me"
             />
             <Button
               type="submit"

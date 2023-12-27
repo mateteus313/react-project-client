@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef} from 'react';
+import React, { useState, useRef} from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -37,6 +37,32 @@ function Copyright(props) {
 // Definir tema posteriormente
 const defaultTheme = createTheme();
 
+function message(type, _message) {
+  if (type === "Error") {
+    return toast.error(_message, {
+      position: "top-center",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+    });
+  } else {
+    toast.success(_message, {
+      position: "top-center",
+      autoClose: 1000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+    });
+  }
+}
+
 export default function SignUp() {
   const [formData, setFormData] = useState({
     username: "",
@@ -70,33 +96,17 @@ export default function SignUp() {
     // Previne que existam campos nulos
     Object.keys(formData).forEach(key => {
       if (formData[key] === '' || formData[key].length === 0) {
-        toast.error(`Campo em falta:${key}`, {
-          position: "top-center",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "colored",
-        });
-        return status = false
+        message('Error', `Campo em falta:${key}`);
+
+        return status = false;
       }
       status = true
     })
 
     if(!formData.email.match(validRegex)) {
-      toast.error("Campo email em formato incorreto", {
-        position: "top-center",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "colored",
-      });
-      return status = false
+      message('Error', 'Campo email em formato incorreto');
+
+      return status = false;
     }
 
     if (status) {
@@ -108,29 +118,12 @@ export default function SignUp() {
             data: formData,
           }).then((response) => {
             if(response.data === 'Inserido')         
-            toast.success('Cadastrado com sucesso!', {
-              position: "top-center",
-              autoClose: 3000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-              theme: "colored",
-            });
-            redirect()
+            message('Success', 'Cadastrado com sucesso!');
+
+            redirect();
           })
         } else {
-          toast.error("Ja existe uma conta com este email cadastrado, faça login!", {
-            position: "top-center",
-            autoClose: 3000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "colored",
-          });
+          message('Error', 'Já existe uma conta com este email cadastrado, faça login!')
         }
       })
     }
@@ -277,6 +270,5 @@ export default function SignUp() {
       </Container>
       <div className='redirect'></div>
     </ThemeProvider>
-    
   );
 }
