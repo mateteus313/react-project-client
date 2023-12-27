@@ -1,7 +1,6 @@
 import React from 'react'
 
 import { Outlet } from 'react-router-dom';
-import Navbar from './components/Navbar';
 
 // Modelo principal onde poderá ser incluso o restante do conteudo das paginas
 const Main = () => {
