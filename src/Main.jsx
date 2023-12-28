@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import { Outlet } from 'react-router-dom';
 
 // Modelo principal onde poderá ser incluso o restante do conteudo das paginas

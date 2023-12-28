@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -59,16 +59,32 @@ function message(type, _message) {
 const defaultTheme = createTheme();
 
 export default function LoginForm() {
-  const [cookies, setCookie] = useCookies(["token"]);
-
-  const navigate = useNavigate();
-
-  const validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-  
+  const [cookies, setCookie, removeCookie] = useCookies(["user"]);
   const [formData, setFormData] = useState({
     email: "",
     password: ""
   });
+  const navigate = useNavigate();
+
+  const validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+  
+  useEffect(() => {
+    // Checar se o token do usuario ainda é valido
+    Axios.get('http://localhost:3001/api/user/logged', {
+        params: { 
+          user: cookies['user'],
+          token: cookies['token']
+        }
+        }).then((response) => {
+          if(response.data) {
+            navigate('/central');
+          } else {
+            removeCookie('user');
+            removeCookie('token');
+          }
+        })
+  });
+
   
   const handleChange = (e) => {
     setFormData({
@@ -95,10 +111,10 @@ export default function LoginForm() {
           
           setTimeout(() => {
             const token = response.data['token'];
-            const user = response.data['userName']
+            const user = response.data['userName'];
 
-            setCookie("token", token, { path: "/" });
-            setCookie("user", user, { path: "/" });
+            setCookie("token", token, { expires: 0});
+            setCookie("user", user, { expires: 0});
             
             navigate('/central');
           }, 2000)

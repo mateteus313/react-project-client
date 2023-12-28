@@ -6,5 +6,5 @@ export function PrivateRoute({children}){
 
     const user = cookie.get('user');
 
-    return user ? children: <Navigate to="/" />;
+    return user ? children : <Navigate to="/" />;
 }

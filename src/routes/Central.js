@@ -46,8 +46,8 @@ const Central = () => {
     console.log(`Setting clicked: ${setting}`);
   
     if (setting === 'Sair') {
-      removeCookie("token");
       removeCookie("user");
+      removeCookie("token");
 
       navigate('/');
     }
