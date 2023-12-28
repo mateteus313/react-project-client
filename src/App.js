@@ -1,12 +1,12 @@
 import React from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import Main from './Main';
-import Home from './routes/Home';
 import LoginForm from './routes/Login.js';
 import RegistrationForm from './routes/Register.js';
 import Central from './routes/Central.js'
 import Error from './routes/Error.jsx'
 import { PrivateRoute } from './auth.js';
+import { CookiesProvider } from 'react-cookie';
 
 const router = createBrowserRouter([
   {
@@ -16,10 +16,6 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: <Home />,
-      },
-      {
-        path: "/login",
         element: <LoginForm />,
       },
       {
@@ -29,9 +25,11 @@ const router = createBrowserRouter([
       {
         path: "/central",
         element:
+        <CookiesProvider>
           <PrivateRoute>
             <Central />
           </PrivateRoute> 
+        </CookiesProvider>
       },
     ]
   },

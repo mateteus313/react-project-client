@@ -3,8 +3,6 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
@@ -16,6 +14,7 @@ import Axios from 'axios'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from "react-router-dom";
+import { useCookies } from "react-cookie";
 
 function Copyright(props) {
   return (
@@ -34,7 +33,7 @@ function message(type, _message) {
   if (type === "Error") {
     return toast.error(_message, {
       position: "top-center",
-      autoClose: 3000,
+      autoClose: 2000,
       hideProgressBar: false,
       closeOnClick: true,
       pauseOnHover: true,
@@ -60,6 +59,8 @@ function message(type, _message) {
 const defaultTheme = createTheme();
 
 export default function LoginForm() {
+  const [cookies, setCookie] = useCookies(["token"]);
+
   const navigate = useNavigate();
 
   const validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
@@ -84,19 +85,27 @@ export default function LoginForm() {
       data: formData,
       }).then((response) => {
         if(response.data === "Invalido") {
-          message('Error', 'Usuario ou senha invalidos!')
-          
+          message('Error', 'Usuario ou senha invalidos!');
+
+          e.target[4].disabled = false;
         } else {
-          message('Success', 'Logado com sucesso!')
+          message('Success', 'Logado com sucesso!');
 
-          const token = response.data['token'];
-          localStorage.setItem('token', JSON.stringify(token))
+          e.target[4].disabled = true;
+          
+          setTimeout(() => {
+            const token = response.data['token'];
+            const user = response.data['userName']
 
-          navigate('/central')
+            setCookie("token", token, { path: "/" });
+            setCookie("user", user, { path: "/" });
+            
+            navigate('/central');
+          }, 2000)
         }
       })
     } else {
-      message('Error', 'Campo email em formato incorreto!')
+      message('Error', 'Campo email em formato incorreto!');
     }
   };
 
@@ -119,19 +128,33 @@ export default function LoginForm() {
         <Box
           sx={{
             marginTop: 8,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
           }}
         >
-          <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+          <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
             Login
           </Typography>
-          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-            <TextField sx={{ input: { color: (!formData.email.match(validRegex) && formData.email.length >= 1) ? 'red' : ''}}}
+          <Box
+            component="form"
+            onSubmit={handleSubmit}
+            noValidate
+            sx={{ mt: 1 }}
+          >
+            <TextField
+              sx={{
+                input: {
+                  color:
+                    !formData.email.match(validRegex) &&
+                    formData.email.length >= 1
+                      ? "red"
+                      : "",
+                },
+              }}
               margin="normal"
               required
               fullWidth
@@ -152,10 +175,6 @@ export default function LoginForm() {
               id="password"
               autoComplete="current-password"
               onChange={handleChange}
-            />
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Lembrar-me"
             />
             <Button
               type="submit"
