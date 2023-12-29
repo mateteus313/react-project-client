@@ -1,49 +1,11 @@
 import {Avatar, Button, CssBaseline, TextField, Link, Grid, Box, LockOutlinedIcon, Typography, Container, createTheme, ThemeProvider} from '../components/Mui.js'
 import React, {useState, useEffect} from 'react';
 import Axios from 'axios'
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from "react-router-dom";
 import { useCookies } from "react-cookie";
-
-function Copyright(props) {
-  return (
-    <Typography variant="body2" color="text.secondary" align="center" {...props}>
-      {'Copyright © '}
-      <Link color="inherit" href="#">
-        React Project - Matheus
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
-
-function message(type, _message) {
-  if (type === "Error") {
-    return toast.error(_message, {
-      position: "top-center",
-      autoClose: 2000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "colored",
-    });
-  } else {
-    toast.success(_message, {
-      position: "top-center",
-      autoClose: 1000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "colored",
-    });
-  }
-}
+import ToastMessage from '../components/logs/toast-message.js';
 
 // Definir tema posteriormente
 const defaultTheme = createTheme();
@@ -74,7 +36,6 @@ export default function LoginForm() {
           }
         })
   });
-
   
   const handleChange = (e) => {
     setFormData({
@@ -91,11 +52,11 @@ export default function LoginForm() {
       data: formData,
       }).then((response) => {
         if(response.data === "Invalido") {
-          message('Error', 'Usuario ou senha invalidos!');
+          ToastMessage('Error', 'Usuario ou senha invalidos!');
 
           e.target[4].disabled = false;
         } else {
-          message('Success', 'Logado com sucesso!');
+          ToastMessage('Success', 'Logado com sucesso!');
 
           e.target[4].disabled = true;
           
@@ -111,7 +72,7 @@ export default function LoginForm() {
         }
       })
     } else {
-      message('Error', 'Campo email em formato incorreto!');
+      ToastMessage('Error', 'Campo email em formato incorreto!');
     }
   };
 
@@ -204,7 +165,6 @@ export default function LoginForm() {
             </Grid>
           </Box>
         </Box>
-        <Copyright sx={{ mt: 8, mb: 4 }} />
       </Container>
     </ThemeProvider>
   );

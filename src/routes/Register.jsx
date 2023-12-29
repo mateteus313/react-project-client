@@ -1,51 +1,13 @@
 import React, { useState, useRef} from 'react';
 import { Avatar, Button, CssBaseline, TextField, FormControlLabel, Checkbox, Link, Grid, Box, LockOutlinedIcon, Typography, Container, createTheme, ThemeProvider, AdapterDayjs, LocalizationProvider, DatePicker} from '../components/Mui.js';
 import Axios from 'axios'
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from "react-router-dom";
-
-function Copyright(props) {
-  return (
-    <Typography variant="body2" color="text.secondary" align="center" {...props}>
-      {'Copyright © '}
-      <Link color="inherit" href="https://github.com/mateteus313">
-        React Project - Matheus
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
+import ToastMessage from '../components/logs/toast-message.js';
 
 // Definir tema posteriormente
 const defaultTheme = createTheme();
-
-function message(type, _message) {
-  if (type === "Error") {
-    return toast.error(_message, {
-      position: "top-center",
-      autoClose: 3000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "colored",
-    });
-  } else {
-    toast.success(_message, {
-      position: "top-center",
-      autoClose: 1000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "colored",
-    });
-  }
-}
 
 export default function SignUp() {
   const [formData, setFormData] = useState({
@@ -63,7 +25,7 @@ export default function SignUp() {
 
   const timerRef = useRef(null);
   const redirect = () => {
-    timerRef.current = setTimeout(() => navigate('/login'), 3500);
+    timerRef.current = setTimeout(() => navigate('/'), 3500);
   }
 
   const handleChange = (e) => {
@@ -77,10 +39,9 @@ export default function SignUp() {
     e.preventDefault();
     let status = false;
 
-    // Previne que existam campos nulos
     Object.keys(formData).forEach(key => {
       if (formData[key] === '' || formData[key].length === 0) {
-        message('Error', `Campo em falta:${key}`);
+        ToastMessage('Error', `Campo em falta:${key}`);
 
         return status = false;
       }
@@ -88,7 +49,7 @@ export default function SignUp() {
     })
 
     if(!formData.email.match(validRegex)) {
-      message('Error', 'Campo email em formato incorreto');
+      ToastMessage('Error', 'Campo email em formato incorreto');
 
       return status = false;
     }
@@ -102,12 +63,12 @@ export default function SignUp() {
             data: formData,
           }).then((response) => {
             if(response.data === 'Inserido')         
-            message('Success', 'Cadastrado com sucesso!');
+            ToastMessage('Success', 'Cadastrado com sucesso!');
 
             redirect();
           })
         } else {
-          message('Error', 'Já existe uma conta com este email cadastrado, faça login!')
+          ToastMessage('Error', 'Já existe uma conta com este email cadastrado, faça login!')
         }
       })
     }
@@ -250,9 +211,7 @@ export default function SignUp() {
             </Grid>
           </Box>
         </Box>
-        <Copyright sx={{ mt: 5 }} />
       </Container>
-      <div className='redirect'></div>
     </ThemeProvider>
   );
 }
