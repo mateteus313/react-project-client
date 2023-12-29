@@ -1,0 +1,8 @@
+.footer .footer-wrapper {
+    height: 100%;
+}
+
+.footer .footer-wrapper .copyright {
+    position: absolute;
+    bottom: 0;
+}
