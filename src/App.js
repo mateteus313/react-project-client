@@ -1,8 +1,8 @@
 import React from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import LoginForm from './routes/Login.js';
-import RegistrationForm from './routes/Register.js';
-import Central from './routes/Central.js'
+import LoginForm from './routes/Login.jsx';
+import RegistrationForm from './routes/Register.jsx';
+import Central from './routes/Central.jsx'
 import { PrivateRoute } from './auth.js';
 import { CookiesProvider } from 'react-cookie';
 import Error from './routes/Error.jsx'
