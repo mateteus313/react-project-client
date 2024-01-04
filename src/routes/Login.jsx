@@ -1,78 +1,82 @@
-import {Avatar, Button, CssBaseline, TextField, Link, Grid, Box, LockOutlinedIcon, Typography, Container, createTheme, ThemeProvider} from '../components/Mui.js'
-import React, {useState, useEffect} from 'react';
-import Axios from 'axios'
-import { ToastContainer} from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import {
+  Avatar,
+  Button,
+  CssBaseline,
+  TextField,
+  Link,
+  Grid,
+  Box,
+  LockOutlinedIcon,
+  Typography,
+  Container,
+  ThemeProvider,
+  createTheme,
+} from "../components/Mui.js";
+import React, { useState, useEffect } from "react";
+import Axios from "axios";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
 import { useCookies } from "react-cookie";
-import ToastMessage from '../components/logs/toast-message.js';
+import ToastMessage from "../components/logs/toast-message.js";
 
-// Definir tema posteriormente
+const USER_API = "http://localhost:3001/api/user";
 const defaultTheme = createTheme();
 
 export default function LoginForm() {
-  const [cookies, setCookie, removeCookie] = useCookies(["user"]);
+  const [cookie, setCookie, removeCookie] = useCookies(["user"]);
   const [formData, setFormData] = useState({
     email: "",
-    password: ""
+    password: "",
   });
   const navigate = useNavigate();
 
-  const validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-  
+  const validRegex =
+    /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+
   useEffect(() => {
-    // Checar se o token do usuario ainda é valido
-    Axios.get('http://localhost:3001/api/user/logged', {
-        params: { 
-          user: cookies['user'],
-          token: cookies['token']
-        }
-        }).then((response) => {
-          if(response.data) {
-            navigate('/central');
-          } else {
-            removeCookie('user');
-            removeCookie('token');
-          }
-        })
+    Axios.get(`${USER_API}/logged`, {
+      params: {
+        user: cookie["user"],
+        token: cookie["token"],
+      },
+    }).then((response) => {
+      if (response.data) {
+        navigate("/central");
+      } else {
+        removeCookie("user");
+        removeCookie("token");
+      }
+    });
   });
-  
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if(formData.email.match(validRegex)) {
-      Axios.post('http://localhost:3001/api/user/login', {
-      data: formData,
+    if (formData.email.match(validRegex)) {
+      Axios.post(`${USER_API}/login`, {
+        data: formData,
       }).then((response) => {
-        if(response.data === "Invalido") {
-          ToastMessage('Error', 'Usuario ou senha invalidos!');
-
-          e.target[4].disabled = false;
+        if (!response.data) {
+          ToastMessage("Error", "Usuario ou senha invalidos!");
         } else {
-          ToastMessage('Success', 'Logado com sucesso!');
+          const token = response.data["token"];
+          const user = response.data["userName"];
 
-          e.target[4].disabled = true;
-          
-          setTimeout(() => {
-            const token = response.data['token'];
-            const user = response.data['userName'];
-
-            setCookie("token", token, { expires: 0});
-            setCookie("user", user, { expires: 0});
-            
-            navigate('/central');
-          }, 2000)
+          setCookie("token", token, { expires: 0 });
+          setCookie("user", user, { expires: 0 });
+          navigate("/central");
         }
-      })
+      });
     } else {
-      ToastMessage('Error', 'Campo email em formato incorreto!');
+      ToastMessage("Error", "Campo email em formato incorreto!");
     }
   };
 

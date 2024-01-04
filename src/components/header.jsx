@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
 import { Cookies } from "react-cookie";
-import { AppBar, Box, Toolbar, IconButton, Typography, Menu, MenuIcon, MenuItem, Container, Avatar, Button, Tooltip, AdbIcon } from "../components/Mui.js"
+import { AppBar, Box, Toolbar, IconButton, Typography, Menu, MenuIcon, MenuItem, Container, Avatar, Button, Tooltip} from "../components/Mui.js"
 
 const pages = ["Products", "Pricing", "Blog"];
 const settings = ["Perfil", "Conta", "Dashboard", "Sair"];

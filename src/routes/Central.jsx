@@ -5,7 +5,7 @@ const Central = () => {
   return (
     <>
       <Header/>
-      <h1>Tudo certo</h1>
+      <h1>.</h1>
       <Footer/>
     </>
   )
